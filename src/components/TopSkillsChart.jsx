@@ -1,4 +1,4 @@
-import { Divider } from "antd";
+import { Divider, Spin } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
@@ -79,8 +79,10 @@ function TopSkillsChart() {
   ];
 
   const [skillData, setSkilldata] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const fetchSkills = async () => {
       try {
         const response = await axios.get(urlGetTopTenSkills);
@@ -90,6 +92,7 @@ function TopSkillsChart() {
       }
     };
     fetchSkills();
+    setLoading(false);
   }, []);
 
   const CustomTooltip = ({ active, payload, label }) => {
@@ -132,37 +135,48 @@ function TopSkillsChart() {
     return null;
   };
   return (
-    <div
-      style={{
-        backgroundColor: "#fff",
-        padding: "1rem 0.5rem 1.5rem 0",
-        borderRadius: "1rem",
-        width: "100%",
-      }}
-    >
-      <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={skillData}>
-          <XAxis dataKey="skill" />
-          <YAxis domain={[0, "dataMax + 1"]} tickCount={1} ticks={[3, 6, 9]} />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend />
+    <Spin spinning={loading}>
+      <div
+        style={{
+          backgroundColor: "#fff",
+          padding: "1rem 0.5rem 1.5rem 0",
+          borderRadius: "1rem",
+          width: "100%",
+        }}
+      >
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={skillData}>
+            <XAxis dataKey="skill" />
+            <YAxis
+              domain={[0, "dataMax + 1"]}
+              tickCount={1}
+              ticks={[3, 6, 9]}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend />
 
-          {/* Bar for Level 1 */}
-          <Bar dataKey="beginner" stackId="a" fill="#FF885B" name="Beginner" />
+            {/* Bar for Level 1 */}
+            <Bar
+              dataKey="beginner"
+              stackId="a"
+              fill="#FF885B"
+              name="Beginner"
+            />
 
-          {/* Bar for Level 2 */}
-          <Bar
-            dataKey="intermediate"
-            stackId="a"
-            fill="#8884d8"
-            name="Intermediate"
-          />
+            {/* Bar for Level 2 */}
+            <Bar
+              dataKey="intermediate"
+              stackId="a"
+              fill="#8884d8"
+              name="Intermediate"
+            />
 
-          {/* Bar for Level 3 */}
-          <Bar dataKey="expert" stackId="a" fill="#82ca9d" name="Expert" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+            {/* Bar for Level 3 */}
+            <Bar dataKey="expert" stackId="a" fill="#82ca9d" name="Expert" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </Spin>
   );
 }
 

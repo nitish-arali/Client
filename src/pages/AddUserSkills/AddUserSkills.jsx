@@ -32,6 +32,8 @@ import dayjs from "dayjs";
 
 function AddUserSkills() {
   const [form] = useForm();
+
+  const [existingSkillsLoading, setExisitingSkillsLoading] = useState(true);
   const [generalLoading, setGeneralLoading] = useState(true);
   const [skills, setSkills] = useState([]);
   const [userSkills, setUserSkills] = useState([]);
@@ -80,6 +82,7 @@ function AddUserSkills() {
   }
 
   function loadExistingSkills() {
+    setExisitingSkillsLoading(true);
     axios
       .get(`${urlGetSkillsForUser}/${LoggedInUser.UserId}`)
       .then((response) => {
@@ -104,12 +107,16 @@ function AddUserSkills() {
       })
       .catch((e) => {
         message.warning(e.response.data.message);
+      })
+      .finally(() => {
+        setExisitingSkillsLoading(false);
       });
   }
   console.log("updated Skills ", updatedSkills);
 
   function handleSubmit(values) {
     if (submitButton === "Submit") {
+      setGeneralLoading(true);
       if (newUserSkills.length <= 0) {
         message.error("Please add skills");
         return;
@@ -141,14 +148,18 @@ function AddUserSkills() {
         })
         .catch((error) => {
           console.error("Error fetching users:", error);
+        })
+        .finally(() => {
+          setGeneralLoading(false);
         });
     } else {
       if (userSkills.length <= 0) {
         message.error("Please add skills");
         return;
       }
-
       console.log("user Skills from db : ", userSkills);
+
+      setGeneralLoading(true);
 
       const updatedExistingUserSkills = userSkills.map((skill) => {
         // Find the matching updated skill by key
@@ -223,6 +234,9 @@ function AddUserSkills() {
         })
         .catch((error) => {
           console.error("Error fetching users:", error);
+        })
+        .finally(() => {
+          setGeneralLoading(false);
         });
     }
   }
@@ -361,6 +375,7 @@ function AddUserSkills() {
   }
 
   function handleAddNewSkill() {
+    setGeneralLoading(true);
     const value = { Skill: newSkill };
     axios
       .post(urlAddSkill, value)
@@ -372,46 +387,51 @@ function AddUserSkills() {
       })
       .catch((error) => {
         console.error(error);
+      })
+      .finally(() => {
+        setGeneralLoading(false);
       });
   }
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: "2rem",
-          margin: "1rem",
-        }}
-      >
-        <Card
+      <Spin spinning={generalLoading}>
+        <div
           style={{
-            width: "35rem",
-            boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
-            height: "22rem",
+            display: "flex",
+            justifyContent: "center",
+            gap: "2rem",
+            margin: "1rem",
           }}
         >
-          <Form
-            form={form}
-            onFinish={handleSubmit}
-            layout="vertical"
-            requiredMark={false}
-          >
-            <Row justify={"center"}>
-              <Col>
-                <p
-                  style={{
-                    fontSize: "1.2rem",
-                    margin: 0,
-                    textDecoration: "underline",
-                  }}
-                >
-                  Add New Skills
-                </p>
-              </Col>
-            </Row>
-            {/* <Row gutter={16} justify="center">
+          <Spin spinning={existingSkillsLoading}>
+            <Card
+              style={{
+                width: "35rem",
+                boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+                height: "22rem",
+              }}
+            >
+              <Form
+                form={form}
+                onFinish={handleSubmit}
+                layout="vertical"
+                requiredMark={false}
+              >
+                <Row justify={"center"}>
+                  <Col>
+                    <p
+                      style={{
+                        fontSize: "1.2rem",
+                        margin: 0,
+                        textDecoration: "underline",
+                      }}
+                    >
+                      Add New Skills
+                    </p>
+                  </Col>
+                </Row>
+                {/* <Row gutter={16} justify="center">
               <Col span={24}>
                 <Form.Item
                   label="Department"
@@ -433,7 +453,7 @@ function AddUserSkills() {
               </Col>
             </Row> */}
 
-            {/* <Row gutter={16} justify="center">
+                {/* <Row gutter={16} justify="center">
               <Col span={24}>
                 <Form.Item
                   label="User"
@@ -453,131 +473,136 @@ function AddUserSkills() {
               </Col>
             </Row> */}
 
-            <Row gutter={16}>
-              <Col span={24}>
-                <Form.Item label="Month" name="Month">
-                  <Input
-                    defaultValue={dayjs().format("MMMM YYYY")}
-                    // defaultValue={dayjs().add(1, "month").format("MMMM YYYY")}
-                    disabled
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={16}>
-              <Col span={24}>
-                <Form.Item label="Skills" name="Skills">
-                  <Select
-                    showSearch
-                    allowClear
-                    dropdownRender={(menu) => (
-                      <>
-                        {menu}
-                        <Divider style={{ margin: "8px 0" }} />
-                        <Row style={{ padding: "0 8px 4px" }} justify={"end"}>
-                          <Col span={24}>
-                            <Input
-                              size="small"
-                              style={{ width: "100%" }}
-                              placeholder="New Skill"
-                              value={newSkill}
-                              onChange={handleNewSkillChange}
-                              onKeyDown={(e) => e.stopPropagation()}
-                            />
-                          </Col>
-                          <Col style={{ marginTop: "0.5rem" }}>
-                            <Button
-                              size="small"
-                              color="primary"
-                              // type="link"
-                              variant="outlined"
-                              icon={<PlusOutlined />}
-                              onClick={handleAddNewSkill}
+                <Row gutter={16}>
+                  <Col span={24}>
+                    <Form.Item label="Month" name="Month">
+                      <Input
+                        defaultValue={dayjs().format("MMMM YYYY")}
+                        // defaultValue={dayjs().add(1, "month").format("MMMM YYYY")}
+                        disabled
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={16}>
+                  <Col span={24}>
+                    <Form.Item label="Skills" name="Skills">
+                      <Select
+                        showSearch
+                        allowClear
+                        dropdownRender={(menu) => (
+                          <>
+                            {menu}
+                            <Divider style={{ margin: "8px 0" }} />
+                            <Row
+                              style={{ padding: "0 8px 4px" }}
+                              justify={"end"}
                             >
-                              Add Skill
-                            </Button>
-                          </Col>
-                        </Row>
-                      </>
-                    )}
-                    placeholder="Select Skills"
-                    options={skills?.map((skill) => ({
-                      label: skill.Skill,
-                      value: skill.Skill,
-                    }))}
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
+                              <Col span={24}>
+                                <Input
+                                  size="small"
+                                  style={{ width: "100%" }}
+                                  placeholder="New Skill"
+                                  value={newSkill}
+                                  onChange={handleNewSkillChange}
+                                  onKeyDown={(e) => e.stopPropagation()}
+                                />
+                              </Col>
+                              <Col style={{ marginTop: "0.5rem" }}>
+                                <Button
+                                  size="small"
+                                  color="primary"
+                                  // type="link"
+                                  variant="outlined"
+                                  icon={<PlusOutlined />}
+                                  onClick={handleAddNewSkill}
+                                >
+                                  Add Skill
+                                </Button>
+                              </Col>
+                            </Row>
+                          </>
+                        )}
+                        placeholder="Select Skills"
+                        options={skills?.map((skill) => ({
+                          label: skill.Skill,
+                          value: skill.Skill,
+                        }))}
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
 
-            <Row gutter={16}>
-              <Col span={18}>
-                <Form.Item label="Skill Level" name="SkillLevel">
-                  <Select
-                    placeholder="Select Level"
-                    options={SkillLevels?.map((level) => ({
-                      label: level.label,
-                      value: level.value,
-                    }))}
-                    style={{ width: "100%" }}
-                    // onChange={handleUserChange}
-                  />
-                </Form.Item>
-              </Col>
+                <Row gutter={16}>
+                  <Col span={18}>
+                    <Form.Item label="Skill Level" name="SkillLevel">
+                      <Select
+                        placeholder="Select Level"
+                        options={SkillLevels?.map((level) => ({
+                          label: level.label,
+                          value: level.value,
+                        }))}
+                        style={{ width: "100%" }}
+                        // onChange={handleUserChange}
+                      />
+                    </Form.Item>
+                  </Col>
 
-              <Col span={6}>
-                <Form.Item label=" ">
-                  <Button
-                    style={{
-                      backgroundColor: "#5cb85c",
-                      color: "#fff",
-                      width: "100%",
-                    }}
-                    onClick={handleAdd}
-                  >
-                    Add
-                  </Button>
-                </Form.Item>
-              </Col>
-            </Row>
+                  <Col span={6}>
+                    <Form.Item label=" ">
+                      <Button
+                        style={{
+                          backgroundColor: "#5cb85c",
+                          color: "#fff",
+                          width: "100%",
+                        }}
+                        onClick={handleAdd}
+                      >
+                        Add
+                      </Button>
+                    </Form.Item>
+                  </Col>
+                </Row>
 
-            <Row gutter={16} justify="center">
-              <Col>
-                <Button type="primary" htmlType="submit">
-                  {submitButton}
-                </Button>
-              </Col>
-              <Col>
-                <Button danger onClick={handleReset}>
-                  Reset
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        </Card>
-        <Flex vertical gap={10}>
-          {newUserSkills.length > 0 && (
-            <Table
-              title={() => "New Skills"}
-              size="small"
-              bordered
-              dataSource={newUserSkills}
-              columns={newSkillColumns}
-            />
-          )}
-          {submitButton == "Update" && (
-            <Table
-              title={() => "Existing Skills"}
-              size="small"
-              bordered
-              dataSource={userSkills}
-              columns={modifySkillColumns}
-            />
-          )}
-        </Flex>
-      </div>
+                <Row gutter={16} justify="center">
+                  <Col>
+                    <Button type="primary" htmlType="submit">
+                      {submitButton}
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button danger onClick={handleReset}>
+                      Reset
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </Card>
+            <Flex vertical gap={10}>
+              {newUserSkills.length > 0 && (
+                <Table
+                  title={() => "New Skills"}
+                  size="small"
+                  bordered
+                  dataSource={newUserSkills}
+                  columns={newSkillColumns}
+                />
+              )}
+              {submitButton == "Update" && (
+                <Table
+                  title={() => "Existing Skills"}
+                  size="small"
+                  bordered
+                  dataSource={userSkills}
+                  columns={modifySkillColumns}
+                />
+              )}
+            </Flex>
+          </Spin>
+        </div>
+      </Spin>
     </>
   );
 }

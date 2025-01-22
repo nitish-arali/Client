@@ -16,16 +16,20 @@ import {
 } from "@ant-design/icons";
 import TopSkillsChart from "../../components/TopSkillsChart";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const userContext = useSelector((state) => state.UserContext.value);
-
+  const navigate = useNavigate();
   return (
     <div style={{ padding: "2rem", textAlign: "center" }}>
       {/* Welcome Banner */}
 
       {/* Quick Navigation */}
-      <Row gutter={[16, 16]} style={{display: "flex", justifyContent: "center"}}>
+      <Row
+        gutter={[16, 16]}
+        style={{ display: "flex", justifyContent: "center" }}
+      >
         <Col xs={24} sm={12} md={6}>
           <Card
             hoverable
@@ -35,7 +39,7 @@ const Home = () => {
               <Button
                 type="primary"
                 icon={<PlusOutlined />}
-                onClick={() => console.log("Navigate to Add Skills")}
+                onClick={() => navigate("/addNewSkills")}
               />,
             ]}
           >
@@ -53,7 +57,7 @@ const Home = () => {
               <Button
                 type="primary"
                 icon={<EyeOutlined />}
-                onClick={() => console.log("Navigate to Skill Overview")}
+                onClick={() => navigate("/skillsOverview")}
               />,
             ]}
           >
@@ -71,7 +75,7 @@ const Home = () => {
               <Button
                 type="primary"
                 icon={<EditOutlined />}
-                onClick={() => console.log("Navigate to Modify Skills")}
+                onClick={() => navigate("/addNewSkills")}
               />,
             ]}
           >
@@ -90,7 +94,7 @@ const Home = () => {
                 <Button
                   type="primary"
                   icon={<SettingOutlined />}
-                  onClick={() => console.log("Navigate to Masters")}
+                  onClick={() => navigate("/masters")}
                 />,
               ]}
             >

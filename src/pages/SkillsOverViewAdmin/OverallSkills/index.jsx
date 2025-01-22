@@ -8,12 +8,14 @@ import axios from "axios";
 function OverallSkills() {
   const [view, setView] = useState("Graphical");
   const [skillData, setSkilldata] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   function handleViewChange(e) {
     setView(e.target.value);
   }
 
   useEffect(() => {
+    setLoading(true);
     const fetchSkills = async () => {
       try {
         const response = await axios.get(urlGetOverallUserSkills);
@@ -23,25 +25,28 @@ function OverallSkills() {
       }
     };
     fetchSkills();
+    setLoading(false);
   }, []);
 
   return (
     <div>
-      <Flex style={{ margin: "0rem 0rem" }}>
-        <Radio.Group
-          defaultValue={view}
-          buttonStyle="solid"
-          onChange={handleViewChange}
-        >
-          <Radio.Button value="Graphical">Graphical</Radio.Button>
-          <Radio.Button value="Tabular">Tabular</Radio.Button>
-        </Radio.Group>
-      </Flex>
-      {view === "Graphical" ? (
-        <OverallSkillsGraphicalView skillData={skillData} />
-      ) : (
-        <OverallSkillsTabularView skillData={skillData} />
-      )}
+      <Spin spinning={loading}>
+        <Flex style={{ margin: "0rem 0rem" }}>
+          <Radio.Group
+            defaultValue={view}
+            buttonStyle="solid"
+            onChange={handleViewChange}
+          >
+            <Radio.Button value="Graphical">Graphical</Radio.Button>
+            <Radio.Button value="Tabular">Tabular</Radio.Button>
+          </Radio.Group>
+        </Flex>
+        {view === "Graphical" ? (
+          <OverallSkillsGraphicalView skillData={skillData} />
+        ) : (
+          <OverallSkillsTabularView skillData={skillData} />
+        )}
+      </Spin>
     </div>
   );
 }
