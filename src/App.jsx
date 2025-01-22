@@ -7,7 +7,33 @@ import Masters from "./pages/Masters/Masters";
 import Login from "./pages/Login/login";
 import "./App.css";
 import SkillsOverviewAdmin from "./pages/SkillsOverViewAdmin";
+import Cookies from "js-cookie";
 
+function ProtectedRoute({ children }) {
+  const token = Cookies.get("NEC_AccessToken");
+
+  if (!token) {
+    // If the JWT token is not there, redirect to the login page
+    return <Navigate to="/login" />;
+  }
+
+  try {
+    // Decode the token and check its expiration time
+    const decoded = jwtDecode(token);
+    const currentTime = Date.now() / 1000;
+
+    if (decoded.exp < currentTime) {
+      // If the token has expired, redirect to the login page
+      return <Navigate to="/login" />;
+    }
+  } catch (e) {
+    console.error("Failed to decode JWT:", e);
+    return <Navigate to="/login" />;
+  }
+
+  // If the token is valid, render the requested component
+  return children;
+}
 function App() {
   return (
     <>
@@ -21,15 +47,47 @@ function App() {
               </MainLayout>
             }
           >
-            <Route path="/" element={<Home />} />
-            <Route path="addNewSkills" element={<AddSkill />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="addNewSkills"
+              element={
+                <ProtectedRoute>
+                  <AddSkill />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="skillsOverview" element={<SkillsOverview />} />
+            <Route
+              path="skillsOverview"
+              element={
+                <ProtectedRoute>
+                  <SkillsOverview />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="skillsOverviewAdmin"
-              element={<SkillsOverviewAdmin />}
+              element={
+                <ProtectedRoute>
+                  <SkillsOverviewAdmin />
+                </ProtectedRoute>
+              }
             />
-            <Route path="masters" element={<Masters />} />
+            <Route
+              path="masters"
+              element={
+                <ProtectedRoute>
+                  <Masters />
+                </ProtectedRoute>
+              }
+            />
           </Route>
           <Route path="login" element={<Login />} />
         </Routes>
