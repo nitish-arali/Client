@@ -14,6 +14,7 @@ import Login from "./pages/Login/login";
 import "./App.css";
 import SkillsOverviewAdmin from "./pages/SkillsOverViewAdmin";
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 function ProtectedRoute({ children }) {
   const token = Cookies.get("NEC_AccessToken");
