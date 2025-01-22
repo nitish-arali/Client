@@ -1,4 +1,4 @@
-import { Flex, Radio } from "antd";
+import { Flex, Radio, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import OverallSkillsGraphicalView from "./OverallSkillsGraphicalView";
 import OverallSkillsTabularView from "./OverallSkillsTabularView";

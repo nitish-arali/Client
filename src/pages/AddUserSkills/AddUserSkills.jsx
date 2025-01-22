@@ -397,15 +397,15 @@ function AddUserSkills() {
   return (
     <>
       <Spin spinning={generalLoading}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "2rem",
-            margin: "1rem",
-          }}
-        >
-          <Spin spinning={existingSkillsLoading}>
+        <Spin spinning={existingSkillsLoading}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: "2rem",
+              margin: "1rem",
+            }}
+          >
             <Card
               style={{
                 width: "35rem",
@@ -601,8 +601,8 @@ function AddUserSkills() {
                 />
               )}
             </Flex>
-          </Spin>
-        </div>
+          </div>
+        </Spin>
       </Spin>
     </>
   );

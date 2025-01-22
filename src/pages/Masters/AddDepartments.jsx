@@ -5,6 +5,7 @@ import {
   Input,
   Row,
   Select,
+  Spin,
   Table,
   Tooltip,
   message,
@@ -16,6 +17,7 @@ import axios from "axios";
 
 function AddDepartments() {
   const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [form] = useForm();
 
@@ -24,6 +26,7 @@ function AddDepartments() {
   }, []);
 
   async function getAllDepartments() {
+    setLoading(true);
     await axios
       .get(urlGetAllDepartments)
       .then((response) => {
@@ -31,11 +34,14 @@ function AddDepartments() {
       })
       .catch((error) => {
         console.error("Error fetching users:", error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }
 
   function handleSubmit(values) {
-    // console.log(values);
+    setLoading(true);
     axios
       .post(urlAddDepartment, values)
       .then((response) => {
@@ -44,6 +50,9 @@ function AddDepartments() {
       })
       .catch((error) => {
         message.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }
 
@@ -65,48 +74,50 @@ function AddDepartments() {
   ];
   return (
     <>
-      <Form
-        style={{ margin: "0 1rem" }}
-        form={form}
-        onFinish={handleSubmit}
-        layout="vertical"
-        requiredMark={false}
-      >
-        <Row gutter={16}>
-          <Col span={8}>
-            <Form.Item
-              label="Department"
-              name="department"
-              rules={[
-                { required: true, message: "Please enter a department!" },
-              ]}
-            >
-              <Input style={{ width: "100%" }} />
-            </Form.Item>
-          </Col>
+      <Spin spinning={loading}>
+        <Form
+          style={{ margin: "0 1rem" }}
+          form={form}
+          onFinish={handleSubmit}
+          layout="vertical"
+          requiredMark={false}
+        >
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item
+                label="Department"
+                name="department"
+                rules={[
+                  { required: true, message: "Please enter a department!" },
+                ]}
+              >
+                <Input style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
 
-          <Col>
-            <Form.Item label=" ">
-              <Button htmlType="submit" type="primary">
-                Save
-              </Button>
-            </Form.Item>
-          </Col>
-          <Col>
-            <Form.Item label=" ">
-              <Button danger>Reset</Button>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-      <div style={{ margin: "1rem" }}>
-        <Table
-          bordered
-          size="small"
-          dataSource={dataSource}
-          columns={columns}
-        />
-      </div>
+            <Col>
+              <Form.Item label=" ">
+                <Button htmlType="submit" type="primary">
+                  Save
+                </Button>
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item label=" ">
+                <Button danger>Reset</Button>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+        <div style={{ margin: "1rem" }}>
+          <Table
+            bordered
+            size="small"
+            dataSource={dataSource}
+            columns={columns}
+          />
+        </div>
+      </Spin>
     </>
   );
 }
