@@ -1,4 +1,10 @@
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from "react-router-dom";
 import AddSkill from "./pages/AddUserSkills/AddUserSkills";
 import MainLayout from "./components/MainLayout";
 import Home from "./pages/Home/Home";
