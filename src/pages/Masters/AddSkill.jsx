@@ -46,6 +46,10 @@ function AddSkill() {
     isProjectRelated: skill.isProjectRelated ? "Yes" : "No",
   }));
 
+function handleReset(){
+form.resetFields();
+}
+
   const columns = [
     {
       title: "Sl. No.",
@@ -129,7 +133,7 @@ function AddSkill() {
             </Col>
             <Col>
               <Form.Item label=" ">
-                <Button danger>Reset</Button>
+                                <Button onClick={handleReset} danger>Reset</Button>
               </Form.Item>
             </Col>
           </Row>
