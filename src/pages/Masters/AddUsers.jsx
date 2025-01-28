@@ -68,6 +68,10 @@ function AddUsers() {
       });
   }
 
+function handleReset(){
+form.resetFields();
+}
+
   // const dataSource = [
   //   {
   //     key: "1",
@@ -191,7 +195,7 @@ function AddUsers() {
               </Button>
             </Col>
             <Col>
-              <Button danger>Reset</Button>
+                              <Button onClick={handleReset} danger>Reset</Button>
             </Col>
           </Row>
         </Form>
