@@ -40,6 +40,10 @@ function AddDepartments() {
       });
   }
 
+function handleReset(){
+form.resetFields();
+}
+
   function handleSubmit(values) {
     setLoading(true);
     axios
@@ -105,7 +109,7 @@ function AddDepartments() {
             </Col>
             <Col>
               <Form.Item label=" ">
-                <Button danger>Reset</Button>
+                <Button onClick={handleReset} danger>Reset</Button>
               </Form.Item>
             </Col>
           </Row>
